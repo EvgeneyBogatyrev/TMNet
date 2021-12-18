@@ -1,1 +1,0 @@
-The evaluation results are placed into this folder.

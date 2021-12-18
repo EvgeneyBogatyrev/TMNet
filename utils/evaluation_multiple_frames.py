@@ -12,6 +12,7 @@ import data.util as data_util
 import models.modules.STVSR as STVSR
 import csv
 import time
+from datetime import datetime
 import skimage
 import skimage.metrics as sm
 import itertools
@@ -52,7 +53,7 @@ def test(test_args):
 
     folder = os.path.join(result_folder, data_mode)
     save_folder = os.path.join(folder, code_name)
-    save_visualization_folder = os.path.join(folder, code_name)
+    save_visualization_folder = result_folder#os.path.join(folder, code_name)
     save_csv = os.path.join(folder, code_name + '.csv')
 
     #### evaluation
@@ -75,6 +76,9 @@ def test(test_args):
     logger = logging.getLogger(name=code_name + '_with_' + data_mode)
     model_params = util.get_model_total_params(model)
 
+
+    
+    print("Begin",datetime.now())
     #### log info
     logger.info('Data: {} - {}'.format(data_mode, test_dataset_folder))
     logger.info('Padding mode: {}'.format(padding))
@@ -113,6 +117,7 @@ def test(test_args):
     model.eval()
     model = model.to(device)
 
+    
     avg_psnr_l = []
     avg_psnr_y_l = []
     # avg_ssim_l = []
@@ -204,7 +209,7 @@ def test(test_args):
 
                 output = util.tensor2img(output_f)
                 if save_imgs:
-                    cv2.imwrite(osp.join(save_sub_folder, str(name_idx) + '.png'), output)
+                    cv2.imwrite(osp.join(result_folder, 'frame_' + str(name_idx + 1).zfill(3) + '.png'), output)
 
                 if 'Custom' not in data_mode:
                     #### calculate PSNR
@@ -218,46 +223,46 @@ def test(test_args):
                     else:
                         cropped_output = output[crop_border:-crop_border, crop_border:-crop_border, :]
                         cropped_GT = GT[crop_border:-crop_border, crop_border:-crop_border, :]
-                    crt_psnr = util.calculate_psnr(cropped_output * 255, cropped_GT * 255)
+                    #crt_psnr = util.calculate_psnr(cropped_output * 255, cropped_GT * 255)
                     # crt_ssim = sm.structural_similarity(im1=cropped_output * 255, im2=cropped_GT * 255, data_range=255, multichannel=True)
-                    cropped_GT_y = data_util.bgr2ycbcr(cropped_GT, only_y=True)
-                    cropped_output_y = data_util.bgr2ycbcr(cropped_output, only_y=True)
-                    crt_psnr_y = util.calculate_psnr(cropped_output_y * 255, cropped_GT_y * 255)
-                    psnr_y_dataset.append(crt_psnr_y)
+                    #cropped_GT_y = data_util.bgr2ycbcr(cropped_GT, only_y=True)
+                    #cropped_output_y = data_util.bgr2ycbcr(cropped_output, only_y=True)
+                    #crt_psnr_y = util.calculate_psnr(cropped_output_y * 255, cropped_GT_y * 255)
+                    #psnr_y_dataset.append(crt_psnr_y)
                     # crt_ssim_y = sm.structural_similarity(im1=cropped_output_y * 255, im2=cropped_GT_y * 255, data_range=255, multichannel=False)
                     # ssim_y_dataset.append(crt_ssim_y)
-                    avg_psnr_sum += crt_psnr
-                    avg_psnr_sum_y += crt_psnr_y
+                    #avg_psnr_sum += crt_psnr
+                    #avg_psnr_sum_y += crt_psnr_y
                     # avg_ssim_sum += crt_ssim
                     # avg_ssim_sum_y += crt_ssim_y
-                    cal_n += 1
-                    logger.info('{:3d} - {:25}.png \tPSNR: {:.6f} dB  PSNR-Y: {:.6f} dB'.format(name_idx + 1, name_idx+1, crt_psnr, crt_psnr_y))
+                    #cal_n += 1
+                    #logger.info('{:3d} - {:25}.png \tPSNR: {:.6f} dB  PSNR-Y: {:.6f} dB'.format(name_idx + 1, name_idx+1, crt_psnr, crt_psnr_y))
 
-                    with open(save_csv, "a+", newline="") as wf:
-                        writer = csv.DictWriter(wf, fieldnames=['name', 'psnr-y'])
-                        if header_written == True:
-                            pass
-                        else:
-                            writer.writeheader()
-                            header_written = True
-                        writer.writerow({'name': osp.join(sub_folder_name, '{:08d}.png'.format(name_idx+1)), 'psnr-y': crt_psnr_y})
+                    #with open(save_csv, "a+", newline="") as wf:
+                    #    writer = csv.DictWriter(wf, fieldnames=['name', 'psnr-y'])
+                    #    if header_written == True:
+                    #        pass
+                    #    else:
+                    #        writer.writeheader()
+                    #        header_written = True
+                    #    writer.writerow({'name': osp.join(sub_folder_name, '{:08d}.png'.format(name_idx+1)), 'psnr-y': crt_psnr_y})
 
-        if 'Custom' not in data_mode:
-            avg_psnr = avg_psnr_sum / cal_n
-            avg_psnr_y = avg_psnr_sum_y / cal_n
+        #if 'Custom' not in data_mode:
+            #avg_psnr = avg_psnr_sum / cal_n
+            #avg_psnr_y = avg_psnr_sum_y / cal_n
             # avg_ssim = avg_ssim_sum / cal_n
             # avg_ssim_y = avg_ssim_sum_y / cal_n
-            logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} frames; '.format(sub_folder_name, avg_psnr, avg_psnr_y, cal_n))
+            #logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} frames; '.format(sub_folder_name, avg_psnr, avg_psnr_y, cal_n))
             # logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} frames; - Average SSIM: {:.6f} dB SSIM-Y: {:.6f} dB for {} frames; '.format(sub_folder_name, avg_psnr, avg_psnr_y, cal_n, avg_ssim, avg_ssim_y, cal_n))
-            avg_psnr_l.append(avg_psnr)
-            avg_psnr_y_l.append(avg_psnr_y)
+            #avg_psnr_l.append(avg_psnr)
+            #avg_psnr_y_l.append(avg_psnr_y)
             # avg_ssim_l.append(avg_ssim)
             # avg_ssim_y_l.append(avg_ssim_y)
 
-    if 'Custom' not in data_mode:
-        logger.info('################ Tidy Outputs ################')
-        for name, psnr, psnr_y in zip(sub_folder_name_l, avg_psnr_l, avg_psnr_y_l):
-            logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB'.format(name, psnr, psnr_y))
+    #if 'Custom' not in data_mode:
+        #logger.info('################ Tidy Outputs ################')
+        #for name, psnr, psnr_y in zip(sub_folder_name_l, avg_psnr_l, avg_psnr_y_l):
+            #logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB'.format(name, psnr, psnr_y))
         # for name, psnr, psnr_y, ssim, ssim_y in zip(sub_folder_name_l, avg_psnr_l, avg_psnr_y_l, avg_ssim_l, avg_ssim_y_l):
             # logger.info('Folder {} - Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB - Average SSIM: {:.6f} dB SSIM-Y: {:.6f} dB. '.format(name, psnr, psnr_y, ssim, ssim_y))
         logger.info('################ Final Results ################')
@@ -266,8 +271,13 @@ def test(test_args):
         logger.info('Model path: {}'.format(model_path))
         logger.info('Save images: {}'.format(save_imgs))
         logger.info('Flip Test: {}'.format(flip_test))
-        logger.info('Total Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} clips.'.format(sum(avg_psnr_l) / len(avg_psnr_l), sum(avg_psnr_y_l) / len(avg_psnr_y_l), len(sub_folder_l)))
+
+        print("End", datetime.now())
+        #logger.info('Total Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} clips.'.format(sum(avg_psnr_l) / len(avg_psnr_l), sum(avg_psnr_y_l) / len(avg_psnr_y_l), len(sub_folder_l)))
         # logger.info('Total Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} clips. Total Average SSIM: {:.6f} dB SSIM-Y: {:.6f} dB for {} clips.'.format(sum(avg_psnr_l) / len(avg_psnr_l), sum(avg_psnr_y_l) / len(avg_psnr_y_l), len(sub_folder_l), sum(avg_ssim_l) / len(avg_ssim_l), sum(avg_ssim_y_l) / len(avg_ssim_y_l), len(sub_folder_l)))
+    
 
 if __name__ == '__main__':
+    print(datetime.now())
     test()
+    print(datetime.now())
