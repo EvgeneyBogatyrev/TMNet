@@ -1,5 +1,8 @@
 import os
 
+with open("/model/models/modules/DCNv2/mak.sh", 'w') as g:
+    g.write("python3 setup.py build develop\n")
+
 with open("run.sh", 'w') as f:
     f.write("cd /model/models/modules/DCNv2\n")
     f.write("bash make.sh\n")
