@@ -8,7 +8,7 @@ custom_option['cuda'] = '0'
 custom_option['code_name'] = 'TMNet'
 custom_option['use_time'] = True
 custom_option['N_ot'] = 7
-custom_option['model_path'] = './checkpoints/tmnet_multiple_frames.pth'
+custom_option['model_path'] = '/model/checkpoints/tmnet_multiple_frames.pth'
 custom_option['result_folder'] = sys.argv[2]
 
 # DATASET =============================================================
