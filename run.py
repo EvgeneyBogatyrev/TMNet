@@ -5,7 +5,7 @@ with open("/model/models/modules/DCNv2/mak.sh", 'w') as g:
 
 with open("run.sh", 'w') as f:
     f.write("cd /model/models/modules/DCNv2\n")
-    f.write("bash make.sh\n")
+    f.write("bash mak.sh\n")
     f.write("cd ../../../\n")
     f.write("mkdir result\n")
     f.write("python3 test_multiple_frames.py /dataset /model/result\n")
