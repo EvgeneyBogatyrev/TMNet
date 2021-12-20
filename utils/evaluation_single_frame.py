@@ -42,7 +42,7 @@ def test(test_args):
     model = STVSR.TMNet(64, N_ot, 8, 5, 40)
 
     #### dataset    
-    if data_mode == 'vid4' or data_mode == 'vimeo_fast' or data_mode == 'vimeo_medium' or data_mode == 'vimeo_slow':
+    if data_mode == 'adobe' or data_mode == 'vimeo_fast' or data_mode == 'vimeo_medium' or data_mode == 'vimeo_slow':
         test_dataset_folder = dataset_folder
     if data_mode == 'SPMC':
         test_dataset_folder = '/data/xiang/SR/spmc/*'
