@@ -1,16 +1,17 @@
 from utils.evaluation_single_frame import test
+import sys
 
 test_args = {}
 
 # DEFAULT =============================================================
 test_args['cuda'] = '1'
 test_args['code_name'] = 'TMNet'
-test_args['model_path'] = './checkpoints/tmnet_single_frame.pth'
-test_args['result_folder'] = './evaluations'
+test_args['model_path'] = '/model/checkpoints/tmnet_single_frame.pth'
+test_args['result_folder'] = sys.argv[2]
 
 # DATASET =============================================================
 test_args['data_mode'] = 'vid4'
-test_args['dataset_folder'] =  './datasets/vid4/LR/*'
+test_args['dataset_folder'] =  sys.argv[1]
 
 # test_args['data_mode'] = 'vimeo_fast'
 # test_args['dataset_folder'] =  './datasets/vimeo-90k_septuplet/fast_of_test/LR/*'
