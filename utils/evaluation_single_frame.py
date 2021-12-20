@@ -165,6 +165,7 @@ def test(test_args):
 
             outputs = output.data.float().cpu().squeeze(0)            
 
+            '''
             if flip_test:
                 # flip W
                 output = single_forward(model, torch.flip(imgs_in, (-1, )))
@@ -183,7 +184,7 @@ def test(test_args):
                 outputs = outputs + output
 
                 outputs = outputs / 4
-
+            '''
             # save imgs
             for idx, name_idx in enumerate(gt_idx):
                 if name_idx in gt_tested_list:
@@ -193,8 +194,9 @@ def test(test_args):
 
                 output = util.tensor2img(output_f)
                 if save_imgs:
-                    cv2.imwrite(osp.join(save_sub_folder, '{:08d}.png'.format(name_idx+1)), output)
+                    cv2.imwrite(osp.join(result_folder, 'frame{:04d}.png'.format(name_idx+1)), output)
 
+                '''
                 if 'Custom' not in data_mode:
                     #### calculate PSNR
                     output = output / 255.
@@ -228,7 +230,9 @@ def test(test_args):
                             writer.writeheader()
                             header_written = True
                         writer.writerow({'name': osp.join(sub_folder_name, '{:08d}.png'.format(name_idx+1)), 'psnr-y': crt_psnr_y})
+                '''
 
+        '''
         if 'Custom' not in data_mode:
             avg_psnr = avg_psnr_sum / cal_n
             avg_psnr_y = avg_psnr_sum_y / cal_n
@@ -241,7 +245,8 @@ def test(test_args):
             avg_psnr_y_l.append(avg_psnr_y)
             avg_ssim_l.append(avg_ssim)
             avg_ssim_y_l.append(avg_ssim_y)
-
+        '''
+    '''
     if 'Custom' not in data_mode:
         logger.info('################ Tidy Outputs ################')
         for name, psnr, psnr_y, ssim, ssim_y in zip(sub_folder_name_l, avg_psnr_l, avg_psnr_y_l, avg_ssim_l, avg_ssim_y_l):
@@ -253,6 +258,6 @@ def test(test_args):
         logger.info('Save images: {}'.format(save_imgs))
         logger.info('Flip Test: {}'.format(flip_test))
         logger.info('Total Average PSNR: {:.6f} dB PSNR-Y: {:.6f} dB for {} clips. Total Average SSIM: {:.6f} dB SSIM-Y: {:.6f} dB for {} clips.'.format(sum(avg_psnr_l) / len(avg_psnr_l), sum(avg_psnr_y_l) / len(avg_psnr_y_l), len(sub_folder_l), sum(avg_ssim_l) / len(avg_ssim_l), sum(avg_ssim_y_l) / len(avg_ssim_y_l), len(sub_folder_l)))
-
+    '''
 if __name__ == '__main__':
     test()
