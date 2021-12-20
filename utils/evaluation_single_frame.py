@@ -74,6 +74,7 @@ def test(test_args):
     logger = logging.getLogger(name=code_name + '_with_' + data_mode)
     model_params = util.get_model_total_params(model)
 
+    '''
     #### log info
     logger.info('Data: {} - {}'.format(data_mode, test_dataset_folder))
     logger.info('Padding mode: {}'.format(padding))
@@ -81,6 +82,8 @@ def test(test_args):
     logger.info('Model parameters: {} M'.format(model_params))
     logger.info('Save images: {}'.format(save_imgs))
     logger.info('Flip Test: {}'.format(flip_test))
+    '''
+
 
     def single_forward(model, imgs_in):
         with torch.no_grad():
